@@ -21,6 +21,35 @@
 (defconst *spell-check-support-enabled* nil) ;; Enable with t if you prefer
 (defconst *is-a-mac* (eq system-type 'darwin))
 
+(defconst my-emacs-d (file-name-as-directory user-emacs-directory)
+  "Directory of emacs.d")
+
+(defconst my-site-lisp-dir (concat my-emacs-d "site-lisp")
+  "Directory of site-lisp")
+
+(defconst my-lisp-dir (concat my-emacs-d "lisp")
+  "Directory of lisp")
+
+(defun my-vc-merge-p ()
+  "Use Emacs for git merge only?"
+  (boundp 'startup-now))
+
+(defun require-init (pkg &optional maybe-disabled)
+  "Load PKG if MAYBE-DISABLED is nil or it's nil but start up in normal slowly."
+  (when (or (not maybe-disabled) (not (my-vc-merge-p)))
+    (load (file-truename (format "%s/%s" my-lisp-dir pkg)) t t)))
+
+(defun local-require (pkg)
+  "Require PKG in site-lisp directory."
+  (unless (featurep pkg)
+    (load (expand-file-name
+           (cond
+            ((eq pkg 'go-mode-load)
+             (format "%s/go-mode/%s" my-site-lisp-dir pkg))
+            (t
+             (format "%s/%s/%s" my-site-lisp-dir pkg pkg))))
+          t t)))
+
 ;;----------------------------------------------------------------------------
 ;; Adjust garbage collection thresholds during startup, and thereafter
 ;;----------------------------------------------------------------------------
@@ -111,7 +140,7 @@
 (require 'init-yaml)
 (require 'init-docker)
 (require 'init-terraform)
-(require 'init-nix)
+;;(require 'init-nix)
 (maybe-require-package 'nginx-mode)
 
 (require 'init-paredit)
@@ -133,6 +162,9 @@
 ;; (require 'init-mu)
 (require 'init-ledger)
 ;; Extra packages which don't require any configuration
+
+;; use evil mode (vi key binding)
+(require-init 'init-evil) ; init-evil dependent on init-clipboard
 
 (require-package 'sudo-edit)
 (require-package 'gnuplot)

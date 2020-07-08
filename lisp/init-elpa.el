@@ -112,6 +112,9 @@ locate PACKAGE."
 
 (add-hook 'package-menu-mode-hook 'sanityinc/maybe-widen-package-menu-columns)
 
+(setq package-archives '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
+                         ("org-cn"   . "http://elpa.emacs-china.org/org/")
+                         ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
 
 (provide 'init-elpa)
 ;;; init-elpa.el ends here
