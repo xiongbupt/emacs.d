@@ -7,7 +7,44 @@
 ;;; Code:
 
 ;; Produce backtraces when errors occur: can be helpful to diagnose startup issues
-;;(setq debug-on-error t)
+(setq debug-on-error t)
+;; https://github.com/hick/emacs-chinese
+(set-language-environment "UTF-8")
+(set-default-coding-systems 'utf-8)
+(set-buffer-file-coding-system 'utf-8-unix)
+(set-clipboard-coding-system 'utf-8-unix)
+(set-file-name-coding-system 'utf-8-unix)
+(set-keyboard-coding-system 'utf-8-unix)
+(set-next-selection-coding-system 'utf-8-unix)
+(set-selection-coding-system 'utf-8-unix)
+(set-terminal-coding-system 'utf-8-unix)
+(setq locale-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+(when (eq system-type 'windows-nt)
+
+  (set-default 'process-coding-system-alist
+               '(("[pP][lL][iI][nN][kK]" gbk-dos . gbk-dos)
+                 ("[cC][mM][dD][pP][rR][oO][xX][yY]" gbk-dos . gbk-dos)))
+
+  (set-language-environment 'Chinese-GB)
+
+  (set-default buffer-file-coding-system 'utf-8-unix)
+  (set-default-coding-systems 'utf-8-unix)
+  (setq-default pathname-coding-system 'euc-cn)
+  (setq file-name-coding-system 'euc-cn)
+  (prefer-coding-system 'cp950)
+  (prefer-coding-system 'gb2312)
+  (prefer-coding-system 'cp936)
+  (prefer-coding-system 'utf-16)
+  (prefer-coding-system 'utf-8-dos)
+  (prefer-coding-system 'utf-8-unix)
+  )
+
+(when (eq system-type 'windows-nt)
+  (set-next-selection-coding-system 'utf-16-le)
+  (set-selection-coding-system 'utf-16-le)
+  (set-clipboard-coding-system 'utf-16-le))
+(set-default-coding-systems 'utf-8)
 
 (let ((minver "24.5"))
   (when (version< emacs-version minver)
@@ -161,6 +198,7 @@
 ;;(require 'init-twitter)
 ;; (require 'init-mu)
 (require 'init-ledger)
+(require 'init-font)
 ;; Extra packages which don't require any configuration
 
 ;; use evil mode (vi key binding)
@@ -213,6 +251,18 @@
 ;;----------------------------------------------------------------------------
 (require 'init-local nil t)
 
+
+;;(setq sis-ism-lazyman-config "1033" "2052" 'im-select)
+;;(setq evil-default-cursor t)
+;;
+;;;; enable the /cursor color/ mode
+;;(setq sis-global-cursor-color-mode t)
+;;;; enable the /respect/ mode
+;;(setq sis-global-respect-mode t)
+;;;; enable the /follow context/ mode for all buffers
+;;(setq sis-global-follow-context-mode t)
+;;;; enable the /inline english/ mode for all buffers
+;;(setq sis-global-inline-mode t)
 
 
 (provide 'init)

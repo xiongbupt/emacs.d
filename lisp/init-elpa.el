@@ -15,7 +15,12 @@
 
 ;;; Standard package repositories
 
-(add-to-list 'package-archives '( "melpa" . "https://melpa.org/packages/") t)
+        
+(add-to-list 'package-archives '("melpa" . "https://mirrors.163.com/elpa/melpa/") t)
+
+;;(add-to-list 'package-archives '("melpa-cn" . "http://mirrors.cloud.tencent.com/elpa/melpa/") t)
+(add-to-list 'package-archives '("org-cn"   . "http://mirrors.cloud.tencent.com/elpa/org/") t)
+(add-to-list 'package-archives '("gnu-cn"   . "http://mirrors.cloud.tencent.com/elpa/gnu/") t)
 ;; Official MELPA Mirror, in case necessary.
 ;;(add-to-list 'package-archives (cons "melpa-mirror" (concat proto "://www.mirrorservice.org/sites/melpa.org/packages/")) t)
 
@@ -109,9 +114,9 @@ locate PACKAGE."
 
 (add-hook 'package-menu-mode-hook 'sanityinc/maybe-widen-package-menu-columns)
 
-(setq package-archives '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
-                         ("org-cn"   . "http://elpa.emacs-china.org/org/")
-                         ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
+;;(setq package-archives '(("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
+;;                         ("org-cn"   . "http://elpa.emacs-china.org/org/")
+;;                         ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
 
 (provide 'init-elpa)
 ;;; init-elpa.el ends here

@@ -3,6 +3,18 @@
 ;; My frequently used commands are listed here
 
 ;; enable evil-mode
+(require-package 'evil-surround)
+(require-package 'evil-visualstar)
+(require-package 'evil-matchit)
+(require-package 'evil-escape)
+(require-package 'evil-nerd-commenter)
+(require-package 'evil-args)
+(require-package 'evil-exchange)
+(require-package 'evil-find-char-pinyin)
+(require-package 'evil-textobj-syntax)
+
+
+;;(require-package 'gitconfig-mode)
 (evil-mode 1)
 
 (defvar my-use-m-for-matchit nil
@@ -935,6 +947,36 @@ If INCLUSIVE is t, the text object is inclusive."
   ;; @see https://bitbucket.org/lyro/evil/issue/342/evil-default-cursor-setting-should-default
   ;; Cursor is always black because of evil.
   ;; Here is the workaround
-  (setq evil-default-cursor t))
+(setq evil-default-cursor t))
+(use-package sis
+  ;; :hook
+  ;; enable the /follow context/ and /inline region/ mode for specific buffers
+  ;; (((text-mode prog-mode) . sis-follow-context-mode)
+  ;;  ((text-mode prog-mode) . sis-inline-mode))
+
+  :config
+
+  (sis-ism-lazyman-config "1033" "2052" 'im-select)
+  ;; enable the /cursor color/ mode
+  (sis-global-cursor-color-mode t)
+  ;; enable the /respect/ mode
+  (sis-global-respect-mode t)
+  ;; enable the /follow context/ mode for all buffers
+  (sis-global-follow-context-mode t)
+  ;; enable the /inline english/ mode for all buffers
+  (sis-global-inline-mode t)
+  )
+
+;  (setq sis-ism-lazyman-config "1033" "2052" 'im-select)
+;;  (setq evil-default-cursor t))
+;;
+;;  ;; enable the /cursor color/ mode
+;;  (setq sis-global-cursor-color-mode t)
+;;  ;; enable the /respect/ mode
+;;  (setq sis-global-respect-mode t)
+;;  ;; enable the /follow context/ mode for all buffers
+;;  (setq sis-global-follow-context-mode t)
+;;  ;; enable the /inline english/ mode for all buffers
+;;  (setq sis-global-inline-mode t)
 
 (provide 'init-evil)
