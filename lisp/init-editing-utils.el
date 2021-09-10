@@ -15,11 +15,10 @@
 
 (setq-default
  blink-cursor-interval 0.4
- bookmark-default-file (expand-file-name ".bookmarks.el" user-emacs-directory)
+ bookmark-default-file (locate-user-emacs-file ".bookmarks.el")
  buffers-menu-max-size 30
  case-fold-search t
  column-number-mode t
- delete-selection-mode t
  ediff-split-window-function 'split-window-horizontally
  ediff-window-setup-function 'ediff-setup-windows-plain
  indent-tabs-mode nil
@@ -34,6 +33,8 @@
  truncate-lines nil
  truncate-partial-width-windows nil)
 
+(add-hook 'after-init-hook 'delete-selection-mode)
+
 (add-hook 'after-init-hook 'global-auto-revert-mode)
 (setq global-auto-revert-non-file-buffers t
       auto-revert-verbose nil)
@@ -45,6 +46,9 @@
 
 
 ;; Huge files
+
+(when (fboundp 'so-long-enable)
+  (add-hook 'after-init-hook 'so-long-enable))
 
 (require-package 'vlf)
 
@@ -92,15 +96,6 @@
   (setq-default display-line-numbers-width 3)
   (add-hook 'prog-mode-hook 'display-line-numbers-mode))
 
-(when (maybe-require-package 'goto-line-preview)
-  (global-set-key [remap goto-line] 'goto-line-preview)
-
-  (when (fboundp 'display-line-numbers-mode)
-    (defun sanityinc/with-display-line-numbers (f &rest args)
-      (let ((display-line-numbers t))
-        (apply f args)))
-    (advice-add 'goto-line-preview :around #'sanityinc/with-display-line-numbers)))
-
 
 
 (when (boundp 'display-fill-column-indicator)
@@ -126,8 +121,6 @@
 
 
 ;;; Zap *up* to char is a handy pair for zap-to-char
-
-(autoload 'zap-up-to-char "misc" "Kill up to, but not including ARGth occurrence of CHAR.")
 (global-set-key (kbd "M-Z") 'zap-up-to-char)
 
 
@@ -171,11 +164,6 @@
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-+") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
-;; From active region to multiple cursors:
-(global-set-key (kbd "C-c m r") 'set-rectangular-region-anchor)
-(global-set-key (kbd "C-c m c") 'mc/edit-lines)
-(global-set-key (kbd "C-c m e") 'mc/edit-ends-of-lines)
-(global-set-key (kbd "C-c m a") 'mc/edit-beginnings-of-lines)
 
 ;; Train myself to use M-f and M-b instead
 (global-unset-key [M-left])
@@ -206,13 +194,13 @@
 ;; use M-S-up and M-S-down, which will work even in lisp modes.
 
 (require-package 'move-dup)
-(global-set-key [M-up] 'md-move-lines-up)
-(global-set-key [M-down] 'md-move-lines-down)
-(global-set-key [M-S-up] 'md-move-lines-up)
-(global-set-key [M-S-down] 'md-move-lines-down)
+(global-set-key [M-up] 'move-dup-move-lines-up)
+(global-set-key [M-down] 'move-dup-move-lines-down)
+(global-set-key [M-S-up] 'move-dup-move-lines-up)
+(global-set-key [M-S-down] 'move-dup-move-lines-down)
 
-(global-set-key (kbd "C-c d") 'md-duplicate-down)
-(global-set-key (kbd "C-c u") 'md-duplicate-up)
+(global-set-key (kbd "C-c d") 'move-dup-duplicate-down)
+(global-set-key (kbd "C-c u") 'move-dup-duplicate-up)
 
 
 ;;; Fix backward-up-list to understand quotes, see http://bit.ly/h7mdIL

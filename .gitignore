@@ -53,4 +53,4 @@ site-lisp/package/
 /transient
 /.lsp-session-v1
 /smex-items
-server/
+/eln-cache/
