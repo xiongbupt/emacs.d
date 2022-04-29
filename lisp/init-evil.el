@@ -3,6 +3,17 @@
 ;; My frequently used commands are listed here
 
 ;; enable evil-mode
+(require-package 'evil-surround)
+(require-package 'evil-visualstar)
+(require-package 'evil-matchit)
+(require-package 'evil-escape)
+(require-package 'evil-nerd-commenter)
+(require-package 'evil-args)
+(require-package 'evil-exchange)
+(require-package 'evil-find-char-pinyin)
+(require-package 'evil-textobj-syntax)
+
+
 (evil-mode 1)
 
 (defvar my-use-m-for-matchit nil
@@ -233,42 +244,42 @@ If the character before and after CH is space or tab, CH is NOT slash"
 
 ;; {{ specify major mode uses Evil (vim) NORMAL state or EMACS original state.
 ;; You may delete this setup to use Evil NORMAL state always.
-(dolist (p '((minibuffer-inactive-mode . emacs)
-             (calendar-mode . emacs)
-             (special-mode . emacs)
-             (grep-mode . emacs)
-             (Info-mode . emacs)
-             (term-mode . emacs)
-             (sdcv-mode . emacs)
-             (anaconda-nav-mode . emacs)
-             (log-edit-mode . emacs)
-             (vc-log-edit-mode . emacs)
-             (magit-log-edit-mode . emacs)
-             (erc-mode . emacs)
-             (neotree-mode . emacs)
-             (w3m-mode . emacs)
-             (gud-mode . emacs)
-             (help-mode . emacs)
-             (eshell-mode . emacs)
-             (shell-mode . emacs)
-             (xref--xref-buffer-mode . emacs)
-             ;;(message-mode . emacs)
-             (epa-key-list-mode . emacs)
-             (fundamental-mode . emacs)
-             (weibo-timeline-mode . emacs)
-             (weibo-post-mode . emacs)
-             (woman-mode . emacs)
-             (sr-mode . emacs)
-             (profiler-report-mode . emacs)
-             (dired-mode . emacs)
-             (compilation-mode . emacs)
-             (speedbar-mode . emacs)
-             (ivy-occur-mode . emacs)
-             (ffip-file-mode . emacs)
-             (ivy-occur-grep-mode . normal)
-             (messages-buffer-mode . normal)
-             (js2-error-buffer-mode . emacs)))
-  (evil-set-initial-state (car p) (cdr p)))
+;; (dolist (p '((minibuffer-inactive-mode . emacs)
+;;              (calendar-mode . emacs)
+;;              (special-mode . emacs)
+;;              (grep-mode . emacs)
+;;              (Info-mode . emacs)
+;;              (term-mode . emacs)
+;;              (sdcv-mode . emacs)
+;;              (anaconda-nav-mode . emacs)
+;;              (log-edit-mode . emacs)
+;;              (vc-log-edit-mode . emacs)
+;;              (magit-log-edit-mode . emacs)
+;;              (erc-mode . emacs)
+;;              (neotree-mode . emacs)
+;;              (w3m-mode . emacs)
+;;              (gud-mode . emacs)
+;;              (help-mode . emacs)
+;;              (eshell-mode . emacs)
+;;              (shell-mode . emacs)
+;;              (xref--xref-buffer-mode . emacs)
+;;              ;;(message-mode . emacs)
+;;              (epa-key-list-mode . emacs)
+;;              (fundamental-mode . emacs)
+;;              (weibo-timeline-mode . emacs)
+;;              (weibo-post-mode . emacs)
+;;              (woman-mode . emacs)
+;;              (sr-mode . emacs)
+;;              (profiler-report-mode . emacs)
+;;              (dired-mode . emacs)
+;;              (compilation-mode . emacs)
+;;              (speedbar-mode . emacs)
+;;              (ivy-occur-mode . emacs)
+;;              (ffip-file-mode . emacs)
+;;              (ivy-occur-grep-mode . normal)
+;;              (messages-buffer-mode . normal)
+;;              (js2-error-buffer-mode . emacs)))
+;;   (evil-set-initial-state (car p) (cdr p)))
 ;; }}
 
 ;; I prefer Emacs way after pressing ":" in evil-mode
@@ -486,11 +497,11 @@ If INCLUSIVE is t, the text object is inclusive."
   "eb" 'eval-buffer
   "sc" 'scratch
   "ee" 'eval-expression
-  "aa" 'copy-to-x-clipboard ; used frequently
+  "aa" 'clipboard-kill-ring-save ;; used frequently
   "aw" 'ace-swap-window
   "af" 'ace-maximize-window
   "ac" 'aya-create
-  "pp" 'paste-from-x-clipboard ; used frequently
+  "pp" 'clipboard-yank ;; used frequently
   "bs" '(lambda () (interactive) (goto-edge-by-comparing-font-face -1))
   "es" 'goto-edge-by-comparing-font-face
   "vj" 'my-validate-json-or-js-expression
@@ -935,6 +946,41 @@ If INCLUSIVE is t, the text object is inclusive."
   ;; @see https://bitbucket.org/lyro/evil/issue/342/evil-default-cursor-setting-should-default
   ;; Cursor is always black because of evil.
   ;; Here is the workaround
-  (setq evil-default-cursor t))
+(setq evil-default-cursor t))
+(use-package sis
+  ;; :hook
+  ;; enable the /follow context/ and /inline region/ mode for specific buffers
+  ;; (((text-mode prog-mode) . sis-follow-context-mode)
+  ;;  ((text-mode prog-mode) . sis-inline-mode))
+
+  :config
+
+  ;; Windows
+  ;;(sis-ism-lazyman-config "1033" "2052" 'im-select)
+  (sis-ism-lazyman-config 
+   "com.apple.keylayout.US" 
+   "com.apple.inputmethod.SCIM.ITABC" )
+  ;; enable the /cursor color/ mode
+  (sis-global-cursor-color-mode t)
+  ;; enable the /respect/ mode
+  (sis-global-respect-mode t)
+  (sis-global-context-mode t)
+  ;; enable the /follow context/ mode for all buffers
+  ;; (sis-global-follow-context-mode t)
+  ;; enable the /inline english/ mode for all buffers
+  (sis-global-inline-mode t)
+  )
+
+;  (setq sis-ism-lazyman-config "1033" "2052" 'im-select)
+;;  (setq evil-default-cursor t))
+;;
+;;  ;; enable the /cursor color/ mode
+;;  (setq sis-global-cursor-color-mode t)
+;;  ;; enable the /respect/ mode
+;;  (setq sis-global-respect-mode t)
+;;  ;; enable the /follow context/ mode for all buffers
+;;  (setq sis-global-follow-context-mode t)
+;;  ;; enable the /inline english/ mode for all buffers
+;;  (setq sis-global-inline-mode t)
 
 (provide 'init-evil)
