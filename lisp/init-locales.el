@@ -22,5 +22,8 @@
 (unless (eq system-type 'windows-nt)
   (set-selection-coding-system 'utf-8))
 
+;;(add-to-list 'load-path "~/.emacs.d/evil")
+(require 'evil)
+(evil-mode 1)
 (provide 'init-locales)
 ;;; init-locales.el ends here

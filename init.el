@@ -110,7 +110,7 @@
 (require 'init-yaml)
 (require 'init-docker)
 (require 'init-terraform)
-(require 'init-nix)
+;;(require 'init-nix)
 (maybe-require-package 'nginx-mode)
 
 (require 'init-paredit)
@@ -131,7 +131,11 @@
 ;;(require 'init-twitter)
 ;; (require 'init-mu)
 (require 'init-ledger)
+(require 'init-font)
 ;; Extra packages which don't require any configuration
+
+;; use evil mode (vi key binding)
+(require-init 'init-evil) ; init-evil dependent on init-clipboard
 
 (require-package 'sudo-edit)
 (require-package 'gnuplot)
