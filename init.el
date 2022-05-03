@@ -135,7 +135,7 @@
 ;; Extra packages which don't require any configuration
 
 ;; use evil mode (vi key binding)
-(require-init 'init-evil) ; init-evil dependent on init-clipboard
+;;(require-init 'init-evil) ; init-evil dependent on init-clipboard
 
 (require-package 'sudo-edit)
 (require-package 'gnuplot)

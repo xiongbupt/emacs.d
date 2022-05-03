@@ -12,6 +12,8 @@
 (require-package 'evil-exchange)
 (require-package 'evil-find-char-pinyin)
 (require-package 'evil-textobj-syntax)
+(require-package 'general)
+(require-package 'sis)
 
 
 (evil-mode 1)
@@ -421,7 +423,6 @@ If the character before and after CH is space or tab, CH is NOT slash"
                         (xref-pulse-momentarily)))))
 ;; }}
 
-(local-require 'general)
 (general-evil-setup t)
 
 ;; {{
