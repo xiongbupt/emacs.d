@@ -941,50 +941,14 @@ If INCLUSIVE is t, the text object is inclusive."
   ;; @see https://bitbucket.org/lyro/evil/issue/511/let-certain-minor-modes-key-bindings
   (defmacro adjust-major-mode-keymap-with-evil (m &optional r)
     `(with-eval-after-load (quote ,(if r r m))
-          (evil-make-overriding-map ,(intern (concat m "-mode-map")) 'normal)
-          ;; force update evil keymaps after git-timemachine-mode loaded
-          (add-hook (quote ,(intern (concat m "-mode-hook"))) #'evil-normalize-keymaps)))
+       (evil-make-overriding-map ,(intern (concat m "-mode-map")) 'normal)
+       ;; force update evil keymaps after git-timemachine-mode loaded
+       (add-hook (quote ,(intern (concat m "-mode-hook"))) #'evil-normalize-keymaps)))
 
   (adjust-major-mode-keymap-with-evil "git-timemachine")
 
   ;; @see https://bitbucket.org/lyro/evil/issue/342/evil-default-cursor-setting-should-default
   ;; Cursor is always black because of evil.
   ;; Here is the workaround
-(setq evil-default-cursor t))
-(use-package sis
-  ;; :hook
-  ;; enable the /follow context/ and /inline region/ mode for specific buffers
-  ;; (((text-mode prog-mode) . sis-follow-context-mode)
-  ;;  ((text-mode prog-mode) . sis-inline-mode))
-
-  :config
-
-  ;; Windows
-  ;;(sis-ism-lazyman-config "1033" "2052" 'im-select)
-  (sis-ism-lazyman-config 
-   "com.apple.keylayout.US" 
-   "com.apple.inputmethod.SCIM.ITABC" )
-  ;; enable the /cursor color/ mode
-  (sis-global-cursor-color-mode t)
-  ;; enable the /respect/ mode
-  (sis-global-respect-mode t)
-  (sis-global-context-mode t)
-  ;; enable the /follow context/ mode for all buffers
-  ;; (sis-global-follow-context-mode t)
-  ;; enable the /inline english/ mode for all buffers
-  (sis-global-inline-mode t)
-  )
-
-;;  (setq sis-ism-lazyman-config "1033" "2052" 'im-select)
-;;  (setq evil-default-cursor t))
-;;
-;;  ;; enable the /cursor color/ mode
-;;  (setq sis-global-cursor-color-mode t)
-;;  ;; enable the /respect/ mode
-;;  (setq sis-global-respect-mode t)
-;;  ;; enable the /follow context/ mode for all buffers
-;;  (setq sis-global-follow-context-mode t)
-;;  ;; enable the /inline english/ mode for all buffers
-;;  (setq sis-global-inline-mode t)
-
+  (setq evil-default-cursor t))
 (provide 'init-evil)
