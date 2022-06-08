@@ -14,6 +14,9 @@
 (require-package 'evil-textobj-syntax)
 (require-package 'general)
 (require-package 'sis)
+(require-package 'org-roam)
+;;(require-package 'emacsql)
+;;(require-package 'emacsql-sqlite)
 
 
 (evil-mode 1)
@@ -482,7 +485,7 @@ If INCLUSIVE is t, the text object is inclusive."
 (define-key evil-inner-text-objects-map "i" #'my-evil-inner-single-or-double-quote)
 ;; }}
 
-;; {{ use `,` as leader key
+;; {{ Use `,` as leader key
 (general-create-definer my-comma-leader-def
   :prefix ","
   :states '(normal visual))
@@ -972,7 +975,7 @@ If INCLUSIVE is t, the text object is inclusive."
   (sis-global-inline-mode t)
   )
 
-;  (setq sis-ism-lazyman-config "1033" "2052" 'im-select)
+;;  (setq sis-ism-lazyman-config "1033" "2052" 'im-select)
 ;;  (setq evil-default-cursor t))
 ;;
 ;;  ;; enable the /cursor color/ mode
