@@ -19,7 +19,7 @@
 ;;(require-package 'emacsql-sqlite)
 
 
-(evil-mode 1)
+(evil-mode -1)
 
 (defvar my-use-m-for-matchit nil
   "If t, use \"m\" key for `evil-matchit-mode'.
