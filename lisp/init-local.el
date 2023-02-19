@@ -24,7 +24,7 @@
   (when *is-a-mac*
     (sis-ism-lazyman-config
      "com.apple.keylayout.US"
-     "im.rime.inputmethod.Squirrel.Rime" 'macism ))
+     "im.rime.inputmethod.Squirrel.Hans" 'macism ))
   ;;(when *sys/wsl*
   ;;  (setq sis-english-source "1033")
   ;;  (setq sis-other-source "2052")
