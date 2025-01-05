@@ -56,9 +56,12 @@ site-lisp/package/
 /smex-items
 /eln-cache/
 /projects
-/forge-*.sqlite
-/projectile.cache
+<<<<<<< HEAD
 librime/
 .DS_Store
 rime/
 *.jar
+=======
+/forge-*.sqlite
+/projectile.cache
+>>>>>>> purcell/master

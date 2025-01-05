@@ -24,8 +24,8 @@
 
     (when (and (executable-find "rg"))
       (defun sanityinc/consult-ripgrep-at-point (&optional dir initial)
-        (interactive (list prefix-arg (when-let ((s (symbol-at-point)))
-                                        (symbol-name s))))
+        (interactive (list current-prefix-arg (when-let ((s (symbol-at-point)))
+                                                (symbol-name s))))
         (consult-ripgrep dir initial))
       (sanityinc/no-consult-preview sanityinc/consult-ripgrep-at-point)
       (global-set-key (kbd "M-?") 'sanityinc/consult-ripgrep-at-point))
@@ -40,9 +40,7 @@
     (when (maybe-require-package 'embark-consult)
       (with-eval-after-load 'embark
         (require 'embark-consult)
-        (add-hook 'embark-collect-mode-hook 'embark-consult-preview-minor-mode)))
-
-    (maybe-require-package 'consult-flycheck)))
+        (add-hook 'embark-collect-mode-hook 'embark-consult-preview-minor-mode)))))
 
 (when (maybe-require-package 'marginalia)
   (add-hook 'after-init-hook 'marginalia-mode))
