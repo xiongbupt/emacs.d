@@ -382,6 +382,7 @@ typical word processor."
       (sh . t) ;; obsolete
       (shell . t)
       (sql . t)
+      (plantuml . t)
       (sqlite . t)))))
 
 

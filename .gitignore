@@ -57,3 +57,6 @@ site-lisp/package/
 /eln-cache/
 /projects
 librime/
+.DS_Store
+rime/
+*.jar

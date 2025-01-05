@@ -2,15 +2,35 @@
 ;; load solarized-theme
 ;; https://github.com/sellout/emacs-color-theme-solarized
 (setq frame-background-mode 'dark)
-(let ((basedir "~/.emacs.d/elpa-28.1/themes/"))
+(let ((basedir "~/.emacs.d/elpa-29.4/themes/"))
   (dolist (f (directory-files basedir))
     (if (and (not (or (equal f ".") (equal f "..")))
              (file-directory-p (concat basedir f)))
         (add-to-list 'custom-theme-load-path (concat basedir f)))))
-(load-theme 'solarized t)
+(load-theme 'sanityinc-solarized-dark t)
 (set-face-attribute 'default nil :height 140)
 (set-default 'truncate-lines t)
+(require-package 'sis)
+(require-package 'plantuml-mode)
 (require-package 'use-package)
+(require-package 'ox-hugo)
+(require-package 'org-download)
+
+;; Drag-and-drop to `dired`
+(add-hook 'dired-mode-hook 'org-download-enable)
+(use-package yasnippet
+  :ensure t
+  :config
+  (yas-global-mode 1))
+
+(use-package yasnippet-snippets
+  :ensure t
+  :after yasnippet)
+
+(setq yas-snippet-dirs
+      '("~/Dropbox/org/snippets"
+        ))
+
 (use-package sis
   ;; :hook
   ;; enable the /follow context/ and /inline region/ mode for specific buffers
@@ -76,6 +96,11 @@
 ;; 下面参考来源https://github.com/skuro/plantuml-mode
 (setq plantuml-jar-path "~/.emacs.d/plantuml.jar")
 (setq plantuml-default-exec-mode 'jar)
+;;(setq plantuml-default-exec-mode 'executable)
+(setq org-plantuml-exec-mode 'plantuml)
+(setq org-plantuml-executable-path "~/bin/plantuml")
+(setq org-plantuml-executable-args '("-headless" "-charset UTF-8"))
+
 ;; Enable plantuml-mode for PlantUML files
 (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
 ;;(add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
@@ -88,4 +113,9 @@
                 (lambda () (interactive) (find-file "~/organizer.org")))
 (set-register ?o (cons 'file "~/organizer.org"))
 (setq org-default-notes-file "~/organizer.org")
+;;hugo设置
+(with-eval-after-load 'ox
+  (require 'ox-hugo))
+;;(custom-set-faces '(org-table ((t (:foreground "#a9a1e1" :height 120 :family "Noto Sans Mono CJK SC Regular")))))
+(add-hook 'org-mode-hook (lambda () (setq toggle-truncate-lines t)))
 (provide 'init-local)
