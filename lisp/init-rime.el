@@ -4,8 +4,10 @@
 (use-package rime
   :custom
   (default-input-method "rime")
-  (rime-librime-root "~/.emacs.d/librime/dist")
-  (rime-emacs-module-header-root "/usr/local/Cellar/emacs-plus@29/29.1/include")
+  (rime-emacs-module-header-root "/opt/homebrew/include")
+  (rime-librime-root "/opt/homebrew/opt/librime")
+  ;(rime-librime-root "~/.emacs.d/librime/dist")
+  ;(rime-emacs-module-header-root "/opt/homebrew/Cellar/emacs-plus@29/29.4/include")
   :config
   (define-key rime-mode-map (kbd "C-i") 'rime-force-enable)
   ;; 方案切换选择
