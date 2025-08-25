@@ -129,4 +129,12 @@
 
 (with-eval-after-load 'markdown-mode
   (define-key markdown-mode-map (kbd "C-c C-e") #'markdown-do))
+;; Add a rule to file-coding-system-alist to try a list of coding systems
+;; for any file that doesn't match a more specific rule earlier in the list.
+;; This effectively provides a preferred order for initial guessing.
+
+;; (setq file-coding-system-alist
+;;       '(
+;;         (".*" . (ucs-bom utf-8 cp936 gb18030 big5 euc-jp euc-kr iso-8859-1))
+;;         ))
 (provide 'init-local)
