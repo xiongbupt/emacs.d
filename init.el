@@ -157,7 +157,7 @@
 ;;(require-init 'init-evil) ; init-evil dependent on init-clipboard
 
 (require-package 'sudo-edit)
-(require-package 'gnuplot)
+(maybe-require-package 'gnuplot)
 (require-package 'htmlize)
 (when *is-a-mac*
   (require-package 'osx-location))
