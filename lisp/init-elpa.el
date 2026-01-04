@@ -28,6 +28,9 @@
                          ("nongnu" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/nongnu/")
                          ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
                          ("melpa"  . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")))
+;; Allow built-in packages to be upgraded
+(setq package-install-upgrade-built-in t)
+
 
 ;; Work-around for https://debbugs.gnu.org/cgi/bugreport.cgi?bug=34341
 (when (and (version< emacs-version "26.3") (boundp 'libgnutls-version) (>= libgnutls-version 30604))
