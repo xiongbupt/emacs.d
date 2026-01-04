@@ -1,13 +1,21 @@
+;;; -*- lexical-binding: t; -*-
+;; 1. 抑制 session 警告
+(add-to-list 'warning-suppress-types '(files missing-lexbind-cookie))
+
+;; 2. 彻底解决 corfu 警告：屏蔽该包的加载
+(setq-default package-load-list '((corfu-terminal nil) t))
+
 ;;(org-latex-pdf-process '("xelatex -interaction nonstopmode %f" "xelatex -interaction nonstopmode %f"))
 ;; load solarized-theme
 ;; https://github.com/sellout/emacs-color-theme-solarized
 (setq frame-background-mode 'dark)
-(let ((basedir "~/.emacs.d/elpa-29.4/themes/"))
+(let ((basedir "~/.emacs.d/elpa-31.0/themes/"))
   (dolist (f (directory-files basedir))
     (if (and (not (or (equal f ".") (equal f "..")))
              (file-directory-p (concat basedir f)))
         (add-to-list 'custom-theme-load-path (concat basedir f)))))
 (load-theme 'sanityinc-solarized-dark t)
+
 (set-face-attribute 'default nil :height 140)
 (set-default 'truncate-lines t)
 (require-package 'sis)
@@ -15,6 +23,12 @@
 (require-package 'use-package)
 (require-package 'ox-hugo)
 (require-package 'org-download)
+(require-package 'company)
+(require-package 'posframe)
+(require-package 'which-key)
+(require-package 'isearch-mb)
+(require-package 'rime)
+
 
 ;; Drag-and-drop to `dired`
 (add-hook 'dired-mode-hook 'org-download-enable)

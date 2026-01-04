@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t; -*-
 (defun tom|notebook-font()
   "Config font on notebook."
   (interactive)

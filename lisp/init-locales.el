@@ -22,5 +22,7 @@
 (unless (eq system-type 'windows-nt)
   (set-selection-coding-system 'utf-8))
 
+;; 忽略关于缺少词法作用域声明的警告
+(add-to-list 'warning-suppress-types '(files missing-lexbind-cookie))
 (provide 'init-locales)
 ;;; init-locales.el ends here

@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t; -*-
 ;;; init-rime.el  --- Custom configuration
 ;;; Commentary
 (require-package 'rime)

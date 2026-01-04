@@ -1,6 +1,8 @@
 ;;; init.el --- Load the full configuration -*- lexical-binding: t -*-
 ;;; Commentary:
-
+;; 针对 Emacs 31 的专项静默配置
+(setq warning-suppress-types '((files missing-lexbind-cookie) (corfu)))
+(setq warning-suppress-log-types '((files missing-lexbind-cookie) (corfu)))
 ;; This file bootstraps the configuration, which is divided into
 ;; a number of other files.
 
