@@ -137,4 +137,25 @@
 ;;       '(
 ;;         (".*" . (ucs-bom utf-8 cp936 gb18030 big5 euc-jp euc-kr iso-8859-1))
 ;;         ))
+(setq debug-on-error t)
+
+(when (eq system-type 'darwin)
+  ;; 1. 设置默认字体（英文字体部分）
+  ;; 推荐使用 macOS 自带的 Monaco 或 Menlo，它们对中文支持的兼容性最好
+  (set-face-attribute 'default nil :family "Monaco" :height 140)
+
+  ;; 2. 绑定中文字体
+  (let ((zh-font (font-spec :family "PingFang SC")))
+    ;; 涵盖汉字、标点、全角符号、注音符号等
+    (dolist (charset '(han cjk-misc symbol bopomofo kana))
+      (set-fontset-font t charset zh-font nil 'prepend)))
+
+  ;; 3. 解决 Org-mode 标签及特殊 Face 的显示
+  ;; 这一步非常重要，它让这些特殊位置也遵循全局的字体逻辑
+  (with-eval-after-load 'org
+    (set-face-attribute 'org-tag nil :family "PingFang SC" :weight 'normal :height 1.0))
+
+  ;; 4. 优化中文缩放比例（可选）
+  ;; 如果觉得中文相对于英文看起来太小，可以微调这个比例（1.2 表示放大 20%）
+  (setq face-font-rescale-alist '(("PingFang SC" . 1.1))))
 (provide 'init-local)
