@@ -26,7 +26,7 @@
 
 (setq package-archives '(("gnu"    . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
                          ("nongnu" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/nongnu/")
-                         ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
+                         ;; ("org-cn"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/")
                          ("melpa"  . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")))
 ;; Allow built-in packages to be upgraded
 (setq package-install-upgrade-built-in t)

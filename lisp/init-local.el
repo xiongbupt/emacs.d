@@ -35,15 +35,12 @@
 (use-package yasnippet
   :ensure t
   :config
+  (add-to-list 'yas-snippet-dirs "~/Dropbox/org/snippets") ;; 建议用 add-to-list
   (yas-global-mode 1))
 
 (use-package yasnippet-snippets
   :ensure t
   :after yasnippet)
-
-(setq yas-snippet-dirs
-      '("~/Dropbox/org/snippets"
-        ))
 
 (use-package sis
   ;; :hook
@@ -171,5 +168,32 @@
 
   ;; 4. 优化中文缩放比例（可选）
   ;; 如果觉得中文相对于英文看起来太小，可以微调这个比例（1.2 表示放大 20%）
-  (setq face-font-rescale-alist '(("PingFang SC" . 1.1))))
+  (setq face-font-rescale-alist '(("PingFang SC" . 1.2))))
+
+(defun my-setup-chinese-fonts ()
+  (when (eq system-type 'darwin)
+    ;; 1. 设置中文字体缩放比例 (1.1 表示放大 10%)
+    ;; 放在函数内确保每次重加载都生效
+    (set-face-attribute 'default nil :family "Monaco" :height 140)
+    (setq face-font-rescale-alist '(("PingFang SC" . 1.2)))
+
+    (let ((zh-font-name "PingFang SC"))
+      ;; 2. 核心修复：遍历 粗体/常规、正体/斜体 的所有组合
+      ;; 这样能彻底解决 HTML/Markdown/Org 中因为加粗导致的问号乱码
+      (dolist (weight '(normal bold))
+        (dolist (slant '(normal italic))
+          ;; (let ((zh-font-spec (font-spec :family zh-font-name :weight weight :slant slant)))
+          (let ((zh-font-spec (font-spec :family zh-font-name :weight weight :slant 'normal)))
+            ;; 涵盖汉字、全角标点、符号、注音等
+            (dolist (charset '(han cjk-misc symbol bopomofo kana))
+              (set-fontset-font t charset zh-font-spec nil 'prepend))))))))
+
+;; 立即执行
+(my-setup-chinese-fonts)
+
+;; 确保在打开新窗口（如 emacsclient）时也生效
+(add-hook 'after-make-frame-functions
+          (lambda (frame)
+            (with-selected-frame frame
+              (my-setup-chinese-fonts))))
 (provide 'init-local)
