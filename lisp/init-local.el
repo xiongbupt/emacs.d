@@ -3,13 +3,13 @@
 (add-to-list 'warning-suppress-types '(files missing-lexbind-cookie))
 
 ;; 2. 彻底解决 corfu 警告：屏蔽该包的加载
-(setq-default package-load-list '((corfu-terminal nil) t))
+;;(setq-default package-load-list '((corfu-terminal nil) t))
 
 ;;(org-latex-pdf-process '("xelatex -interaction nonstopmode %f" "xelatex -interaction nonstopmode %f"))
 ;; load solarized-theme
 ;; https://github.com/sellout/emacs-color-theme-solarized
 (setq frame-background-mode 'dark)
-(let ((basedir "~/.emacs.d/elpa-31.0/themes/"))
+(let ((basedir "~/.emacs.d/elpa-30.2/themes/"))
   (dolist (f (directory-files basedir))
     (if (and (not (or (equal f ".") (equal f "..")))
              (file-directory-p (concat basedir f)))
@@ -186,8 +186,23 @@
           (let ((zh-font-spec (font-spec :family zh-font-name :weight weight :slant 'normal)))
             ;; 涵盖汉字、全角标点、符号、注音等
             (dolist (charset '(han cjk-misc symbol bopomofo kana))
-              (set-fontset-font t charset zh-font-spec nil 'prepend))))))))
+              (set-fontset-font t charset zh-font-spec nil 'prepend)))))))
+  (when (eq system-type 'gnu/linux)
+    ;; 1. 设置中文字体缩放比例 (1.1 表示放大 10%)
+    ;; 放在函数内确保每次重加载都生效
+    (set-face-attribute 'default nil :family "Source Code Pro" :height 150)
+    (setq face-font-rescale-alist '(("Noto Sans CJK SC" . 1.0)))
 
+    (let ((zh-font-name "Noto Sans CJK SC"))
+      ;; 2. 核心修复：遍历 粗体/常规、正体/斜体 的所有组合
+      ;; 这样能彻底解决 HTML/Markdown/Org 中因为加粗导致的问号乱码
+      (dolist (weight '(normal bold))
+        (dolist (slant '(normal italic))
+          ;; (let ((zh-font-spec (font-spec :family zh-font-name :weight weight :slant slant)))
+          (let ((zh-font-spec (font-spec :family zh-font-name :weight weight :slant 'normal)))
+            ;; 涵盖汉字、全角标点、符号、注音等
+            (dolist (charset '(han cjk-misc symbol bopomofo kana))
+              (set-fontset-font t charset zh-font-spec nil 'prepend))))))))
 ;; 立即执行
 (my-setup-chinese-fonts)
 

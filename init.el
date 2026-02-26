@@ -79,7 +79,7 @@
 (require 'init-recentf)
 (require 'init-minibuffer)
 (require 'init-hippie-expand)
-(require 'init-corfu)
+;;(require 'init-corfu)
 (require 'init-windows)
 (require 'init-sessions)
 (require 'init-mmm)
