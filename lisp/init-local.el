@@ -16,12 +16,25 @@
         (add-to-list 'custom-theme-load-path (concat basedir f)))))
 (load-theme 'sanityinc-solarized-dark t)
 
+
+(require 'package)
+;; 1. 强制重置禁用名单
+(setq package-load-list '(all))
+(setq package-ignored-packages nil)
+
+;; 2. 针对 Emacs 30 的底层修复：强制清理被标记为 disabled 的内置/外部包缓存
+(setq package--builtins (delq (assq 'tomelr package--builtins) package--builtins))
+(setq package--builtins (delq (assq 'yasnippet package--builtins) package--builtins))
+
+;; 3. 重新初始化
+(package-initialize)
+
 (set-face-attribute 'default nil :height 140)
 (set-default 'truncate-lines t)
 (require-package 'sis)
-(require-package 'plantuml-mode)
+;;(require-package 'plantuml-mode)
 (require-package 'use-package)
-(require-package 'ox-hugo)
+;;(require-package 'ox-hugo)
 (require-package 'org-download)
 (require-package 'company)
 (require-package 'posframe)
@@ -102,18 +115,18 @@
 ;;        (list :font "sarasa ui sc"
 ;;              :internal-border-width 10))
 ;;  )
-(setq org-plantuml-jar-path (expand-file-name "~/.emacs.d/plantuml.jar"))
+;;(setq org-plantuml-jar-path (expand-file-name "~/.emacs.d/plantuml.jar"))
 
 ;; 下面参考来源https://github.com/skuro/plantuml-mode
-(setq plantuml-jar-path "~/.emacs.d/plantuml.jar")
-(setq plantuml-default-exec-mode 'jar)
+;;(setq plantuml-jar-path "~/.emacs.d/plantuml.jar")
+;;(setq plantuml-default-exec-mode 'jar)
 ;;(setq plantuml-default-exec-mode 'executable)
-(setq org-plantuml-exec-mode 'plantuml)
-(setq org-plantuml-executable-path "~/bin/plantuml")
-(setq org-plantuml-executable-args '("-headless" "-charset UTF-8"))
+;;(setq org-plantuml-exec-mode 'plantuml)
+;;(setq org-plantuml-executable-path "~/bin/plantuml")
+;;(setq org-plantuml-executable-args '("-headless" "-charset UTF-8"))
 
 ;; Enable plantuml-mode for PlantUML files
-(add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
+;;(add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
 ;;(add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
 ;; 参考https://github.com/d12frosted/homebrew-emacs-plus/issues/383
 ;;(setq insert-directory-program "gls" dired-use-ls-dired t)
@@ -125,8 +138,8 @@
 (set-register ?o (cons 'file "~/organizer.org"))
 (setq org-default-notes-file "~/organizer.org")
 ;;hugo设置
-(with-eval-after-load 'ox
-  (require 'ox-hugo))
+;;(with-eval-after-load 'ox
+;;  (require 'ox-hugo))
 ;;(custom-set-faces '(org-table ((t (:foreground "#a9a1e1" :height 120 :family "Noto Sans Mono CJK SC Regular")))))
 (add-hook 'org-mode-hook (lambda () (setq toggle-truncate-lines t)))
 (autoload 'markdown-mode "markdown-mode"
@@ -150,65 +163,48 @@
 ;;         ))
 (setq debug-on-error t)
 
-(when (eq system-type 'darwin)
-  ;; 1. 设置默认字体（英文字体部分）
-  ;; 推荐使用 macOS 自带的 Monaco 或 Menlo，它们对中文支持的兼容性最好
-  (set-face-attribute 'default nil :family "Monaco" :height 140)
 
-  ;; 2. 绑定中文字体
-  (let ((zh-font (font-spec :family "PingFang SC")))
-    ;; 涵盖汉字、标点、全角符号、注音符号等
-    (dolist (charset '(han cjk-misc symbol bopomofo kana))
-      (set-fontset-font t charset zh-font nil 'prepend)))
 
-  ;; 3. 解决 Org-mode 标签及特殊 Face 的显示
-  ;; 这一步非常重要，它让这些特殊位置也遵循全局的字体逻辑
-  (with-eval-after-load 'org
-    (set-face-attribute 'org-tag nil :family "PingFang SC" :weight 'normal :height 1.0))
-
-  ;; 4. 优化中文缩放比例（可选）
-  ;; 如果觉得中文相对于英文看起来太小，可以微调这个比例（1.2 表示放大 20%）
-  (setq face-font-rescale-alist '(("PingFang SC" . 1.2))))
-
-(defun my-setup-chinese-fonts ()
-  (when (eq system-type 'darwin)
-    ;; 1. 设置中文字体缩放比例 (1.1 表示放大 10%)
-    ;; 放在函数内确保每次重加载都生效
-    (set-face-attribute 'default nil :family "Monaco" :height 140)
-    (setq face-font-rescale-alist '(("PingFang SC" . 1.2)))
-
-    (let ((zh-font-name "PingFang SC"))
-      ;; 2. 核心修复：遍历 粗体/常规、正体/斜体 的所有组合
-      ;; 这样能彻底解决 HTML/Markdown/Org 中因为加粗导致的问号乱码
+(defun setup-chinese-font ()
+  "根据系统类型设置中文字体，解决粗体、斜体导致的乱码及缩放问题。"
+  (interactive)
+  (cond
+   ;; --- macOS 配置 ---
+   ((eq system-type 'darwin)
+    (let ((english-font "Monaco")
+          (chinese-font "PingFang SC"))
+      ;; 1. 设置英文字体
+      (set-face-attribute 'default nil :family english-font :height 140)
+      ;; 2. 设置中文字体缩放
+      (setq face-font-rescale-alist '(("PingFang SC" . 1.1)))
+      ;; 3. 为不同样式绑定中文字体
       (dolist (weight '(normal bold))
         (dolist (slant '(normal italic))
-          ;; (let ((zh-font-spec (font-spec :family zh-font-name :weight weight :slant slant)))
-          (let ((zh-font-spec (font-spec :family zh-font-name :weight weight :slant 'normal)))
-            ;; 涵盖汉字、全角标点、符号、注音等
+          ;; 注意：中文字体通常不支持真正斜体，这里强制映射到 normal 避免乱码
+          (let ((zh-font-spec (font-spec :family chinese-font :weight weight :slant 'normal)))
             (dolist (charset '(han cjk-misc symbol bopomofo kana))
               (set-fontset-font t charset zh-font-spec nil 'prepend)))))))
-  (when (eq system-type 'gnu/linux)
-    ;; 1. 设置中文字体缩放比例 (1.1 表示放大 10%)
-    ;; 放在函数内确保每次重加载都生效
-    (set-face-attribute 'default nil :family "Source Code Pro" :height 150)
-    (setq face-font-rescale-alist '(("Noto Sans CJK SC" . 1.0)))
 
-    (let ((zh-font-name "Noto Sans CJK SC"))
-      ;; 2. 核心修复：遍历 粗体/常规、正体/斜体 的所有组合
-      ;; 这样能彻底解决 HTML/Markdown/Org 中因为加粗导致的问号乱码
+   ;; --- Linux (飞腾/UOS) 配置 ---
+   ((eq system-type 'gnu/linux)
+    (let ((english-font "Source Code Pro")
+          (chinese-font "Noto Sans CJK SC"))
+      ;; 1. 设置英文字体
+      (set-face-attribute 'default nil :family english-font :height 150)
+      ;; 2. 设置中文字体缩放
+      (setq face-font-rescale-alist '(("Noto Sans CJK SC" . 1.0)))
+      ;; 3. 遍历样式组合
       (dolist (weight '(normal bold))
         (dolist (slant '(normal italic))
-          ;; (let ((zh-font-spec (font-spec :family zh-font-name :weight weight :slant slant)))
-          (let ((zh-font-spec (font-spec :family zh-font-name :weight weight :slant 'normal)))
-            ;; 涵盖汉字、全角标点、符号、注音等
+          (let ((zh-font-spec (font-spec :family chinese-font :weight weight :slant 'normal)))
             (dolist (charset '(han cjk-misc symbol bopomofo kana))
-              (set-fontset-font t charset zh-font-spec nil 'prepend))))))))
-;; 立即执行
-(my-setup-chinese-fonts)
+              (set-fontset-font t charset zh-font-spec nil 'prepend)))))))))
 
-;; 确保在打开新窗口（如 emacsclient）时也生效
-(add-hook 'after-make-frame-functions
-          (lambda (frame)
-            (with-selected-frame frame
-              (my-setup-chinese-fonts))))
+;; 1. 立即执行
+(setup-chinese-font)
+
+;; 2. 针对 emacsclient (Daemon) 模式的兼容
+;; 使用 after-setting-font-hook 通常比 after-make-frame-functions 在处理字体时更稳定
+(add-hook 'server-after-make-frame-hook 'setup-chinese-font)
+
 (provide 'init-local)
