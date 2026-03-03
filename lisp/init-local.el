@@ -18,6 +18,8 @@
 
 
 (require 'package)
+(eval-when-compile
+  (require 'use-package))
 ;; 1. 强制重置禁用名单
 (setq package-load-list '(all))
 (setq package-ignored-packages nil)
@@ -32,19 +34,58 @@
 (set-face-attribute 'default nil :height 140)
 (set-default 'truncate-lines t)
 (require-package 'sis)
-;;(require-package 'plantuml-mode)
-(require-package 'use-package)
-;;(require-package 'ox-hugo)
+;; (require-package 'plantuml-mode)
+;; (require-package 'use-pacage)
+;; (require-package 'ox-hugo)
 (require-package 'org-download)
 (require-package 'company)
 (require-package 'posframe)
 (require-package 'which-key)
 (require-package 'isearch-mb)
 (require-package 'rime)
+;; (require 'org-download)
+;; 1. 修正后的 Rime 辅助函数 (添加了 &rest _ 解决参数报错)
+(defun my/rime-ensure-ascii-safe (&rest _)
+  (interactive)
+  (when (string= current-input-method "rime")
+    (setq rime-is-ascii-mode t)
+    (ignore-errors (rime--redisplay))))
 
+;; 强制加载 org-download，确保 M-x 能找到命令
+(require 'org-download)
 
-;; Drag-and-drop to `dired`
+(with-eval-after-load 'org-download
+  ;; 1. 跨系统截图命令判定 (重点调整了 Mac 下的 screenshot 命令)
+  (setq org-download-screenshot-method
+        (cond
+         ;; macOS: screenshot 命令用 screencapture (唤起准星)
+         ;;        clipboard 命令会自动使用 pngpaste (如果安装了)
+         ((eq system-type 'darwin) "screencapture -i %s")
+
+         ;; Linux: 保持原样
+         ((eq system-type 'gnu/linux)
+          (if (string= (getenv "XDG_SESSION_TYPE") "wayland")
+              "wl-paste > %s"
+            "xclip -selection clipboard -t image/png -o > %s"))))
+
+  ;; 2. 基础路径与缩放设置
+  (setq-default org-download-image-dir "./images")
+  (setq org-download-image-org-width 400)
+  (setq org-download-heading-lvl nil)
+
+  ;; 3. 联动 Rime：截图或粘贴前切英文
+  (advice-add 'org-download-screenshot :before #'my/rime-ensure-ascii-safe)
+  (advice-add 'org-download-clipboard :before #'my/rime-ensure-ascii-safe)
+
+  ;; 4. 快捷键
+  (with-eval-after-load 'org
+    (define-key org-mode-map (kbd "C-c d s") 'org-download-screenshot)
+    (define-key org-mode-map (kbd "C-c d v") 'org-download-clipboard)))
+
+;; 启用插件
 (add-hook 'dired-mode-hook 'org-download-enable)
+(add-hook 'org-mode-hook 'org-download-enable)
+
 (use-package yasnippet
   :ensure t
   :config
@@ -163,48 +204,75 @@
 ;;         ))
 (setq debug-on-error t)
 
-
-
 (defun setup-chinese-font ()
-  "根据系统类型设置中文字体，解决粗体、斜体导致的乱码及缩放问题。"
+  "设置中英文、符号及 Emoji 字体，解决加粗乱码与符号显示问题。"
   (interactive)
   (cond
    ;; --- macOS 配置 ---
    ((eq system-type 'darwin)
     (let ((english-font "Monaco")
-          (chinese-font "PingFang SC"))
-      ;; 1. 设置英文字体
+          (chinese-font "PingFang SC")
+          (emoji-font "Apple Color Emoji"))
+      ;; 1. 基础英文字体
       (set-face-attribute 'default nil :family english-font :height 140)
-      ;; 2. 设置中文字体缩放
       (setq face-font-rescale-alist '(("PingFang SC" . 1.1)))
-      ;; 3. 为不同样式绑定中文字体
+
+      ;; 2. 遍历样式：确保中文和符号在粗体/斜体下不乱码
       (dolist (weight '(normal bold))
-        (dolist (slant '(normal italic))
-          ;; 注意：中文字体通常不支持真正斜体，这里强制映射到 normal 避免乱码
-          (let ((zh-font-spec (font-spec :family chinese-font :weight weight :slant 'normal)))
-            (dolist (charset '(han cjk-misc symbol bopomofo kana))
-              (set-fontset-font t charset zh-font-spec nil 'prepend)))))))
+        (dolist (slant '(normal italic)))
+        (let ((zh-spec (font-spec :family chinese-font :weight weight :slant 'normal)))
+          ;; 覆盖汉字、中日韩标点及通用符号
+          (dolist (charset '(han cjk-misc symbol bopomofo kana))
+            (set-fontset-font t charset zh-spec nil 'prepend))))
+
+      ;; 3. 专门处理 Emoji 脚本
+      (set-fontset-font t 'emoji (font-spec :family emoji-font) nil 'prepend)))
 
    ;; --- Linux (飞腾/UOS) 配置 ---
    ((eq system-type 'gnu/linux)
     (let ((english-font "Source Code Pro")
-          (chinese-font "Noto Sans CJK SC"))
-      ;; 1. 设置英文字体
+          (chinese-font "Noto Sans CJK SC")
+          (emoji-font "Noto Color Emoji"))
+      ;; 1. 基础英文字体
       (set-face-attribute 'default nil :family english-font :height 150)
-      ;; 2. 设置中文字体缩放
       (setq face-font-rescale-alist '(("Noto Sans CJK SC" . 1.0)))
-      ;; 3. 遍历样式组合
-      (dolist (weight '(normal bold))
-        (dolist (slant '(normal italic))
-          (let ((zh-font-spec (font-spec :family chinese-font :weight weight :slant 'normal)))
-            (dolist (charset '(han cjk-misc symbol bopomofo kana))
-              (set-fontset-font t charset zh-font-spec nil 'prepend)))))))))
 
-;; 1. 立即执行
+      ;; 2. 遍历样式
+      (dolist (weight '(normal bold))
+        (dolist (slant '(normal italic)))
+        (let ((zh-spec (font-spec :family chinese-font :weight weight :slant 'normal)))
+          (dolist (charset '(han cjk-misc symbol bopomofo kana))
+            (set-fontset-font t charset zh-spec nil 'prepend))))
+
+      ;; 3. 专门处理 Emoji 脚本 (Linux)
+      ;; 如果飞腾系统没装该字体，可以 sudo apt install fonts-noto-color-emoji
+      (set-fontset-font t 'emoji (font-spec :family emoji-font) nil 'prepend)))))
+
+;; --- 关键：挂载到所有可能的入口 ---
+
+;; 1. 立即执行（针对普通启动）
 (setup-chinese-font)
 
-;; 2. 针对 emacsclient (Daemon) 模式的兼容
-;; 使用 after-setting-font-hook 通常比 after-make-frame-functions 在处理字体时更稳定
+;; 2. 针对 emacsclient (Daemon) 模式
+;; 当你用 ew 脚本唤起新窗口时，这个 hook 确保配置重新加载
 (add-hook 'server-after-make-frame-hook 'setup-chinese-font)
 
+;; 3. 兜底方案：如果上述两个都没解决 symbol 乱码，强制对所有 frame 应用一次
+(add-hook 'after-make-frame-functions
+          (lambda (frame)
+            (with-selected-frame frame (setup-chinese-font))))
+
+
+
+;;;使用中文的分词配置
+;;;https://github.com/kanglmf/emacs-chinese-word-segmentation
+(add-to-list 'load-path "~/.emacs.d/chinese")
+(setq cns-process-type 'shell)
+(setq cns-prog "~/.emacs.d/chinese/cnws")
+(setq cns-dict-directory "~/.emacs.d/chinese/cppjieba/dict")
+(setq cns-recent-segmentation-limit 20) ; default is 10
+(setq cns-debug nil) ; disable debug output, default is t
+(require 'cns nil t)
+(when (featurep 'cns)
+  (add-hook 'find-file-hook 'cns-auto-enable))
 (provide 'init-local)
