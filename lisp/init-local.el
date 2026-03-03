@@ -1,4 +1,6 @@
-;;; -*- lexical-binding: t; -*-
+;;; init-local.el --- Settings and helpers for local.el -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Code:
 ;; 1. 抑制 session 警告
 (add-to-list 'warning-suppress-types '(files missing-lexbind-cookie))
 
@@ -275,4 +277,145 @@
 (require 'cns nil t)
 (when (featurep 'cns)
   (add-hook 'find-file-hook 'cns-auto-enable))
+
+;;;参考https://pavinberg.github.io/emacs-book/zh/optimization/，添加相关的插件
+(use-package counsel
+  :ensure t)
+
+(use-package ivy
+  :ensure t
+  :init
+  (ivy-mode 1)
+  (counsel-mode 1)
+  :config
+  (setq ivy-use-virtual-buffers t)
+  (setq search-default-mode #'char-fold-to-regexp)
+  (setq ivy-count-format "(%d/%d) ")
+  :bind
+  (("C-s" . 'swiper)
+   ("C-x b" . 'ivy-switch-buffer)
+   ("C-c v" . 'ivy-push-view)
+   ("C-c s" . 'ivy-switch-view)
+   ("C-c V" . 'ivy-pop-view)
+   ("C-x C-@" . 'counsel-mark-ring); 在某些终端上 C-x C-SPC 会被映射为 C-x C-@，比如在 macOS 上，所以要手动设置
+   ("C-x C-SPC" . 'counsel-mark-ring)
+   :map minibuffer-local-map
+   ("C-r" . counsel-minibuffer-history)))
+
+(use-package amx
+  :ensure t
+  :init (amx-mode))
+
+(use-package ace-window
+  :ensure t
+  :bind (("C-x o" . 'ace-window)))
+
+
+(use-package mwim
+  :ensure t
+  :bind
+  ("C-a" . mwim-beginning-of-code-or-line)
+  ("C-e" . mwim-end-of-code-or-line))
+
+(use-package hydra
+  :ensure t)
+
+(use-package use-package-hydra
+  :ensure t
+  :after hydra)
+
+
+(use-package undo-tree
+  :ensure t
+  :after hydra
+  ;; 1. 初始化设置
+  :init
+  (global-undo-tree-mode) ; 全局启用 undo-tree
+
+  ;; 2. 变量配置
+  :custom
+  (undo-tree-auto-save-history t) ; 自动保存撤销历史到文件
+  (undo-tree-history-directory-alist '(("." . "~/.emacs.d/.undo"))) ; 统一存放历史文件，避免污染项目目录
+
+  ;; 3. 快捷键绑定
+  :bind ("C-x C-h u" . hydra-undo-tree/body)
+
+  ;; 4. Hydra 菜单定义
+  :hydra (hydra-undo-tree (:hint nil)
+                          "
+  _p_: undo  _n_: redo  _s_: save  _l_: load  _u_: visualize  _q_: quit
+          "
+                          ("p" undo-tree-undo)
+                          ("n" undo-tree-redo)
+                          ("s" undo-tree-save-history)
+                          ("l" undo-tree-load-history)
+                          ("u" undo-tree-visualize :color blue)
+                          ("q" nil :color blue)))
+(use-package undo-tree
+  :ensure t
+  :init (global-undo-tree-mode)
+  :after hydra
+  :bind ("C-x C-h u" . hydra-undo-tree/body)
+  :hydra (hydra-undo-tree (:hint nil)
+                          "
+ _p_: undo _n_: redo _s_: save _l_: load  "
+                          ("p"  undo-tree-undo)
+                          ("n"  undo-tree-redo)
+                          ("s"  undo-tree-save-history)
+                          ("l"  undo-tree-load-history)
+                          ("u"  undo-tree-visualize "visualize" :color blue)
+                          ("q"  nil "quit" :color blue)))
+
+;; Enable global undo-tree mode if not already done
+(global-undo-tree-mode)
+
+;; Enable auto-saving of undo history
+(setq undo-tree-auto-save-history t)
+
+;; Redirect all undo history files to a specific directory
+;; This example uses "~/.emacs.d/undo"
+(setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
+
+(use-package multiple-cursors
+  :ensure t
+  :after hydra
+  :bind
+  (("C-x C-h m" . hydra-multiple-cursors/body)
+   ("C-S-<mouse-1>" . mc/toggle-cursor-on-click))
+  :hydra
+  (hydra-multiple-cursors
+   (:hint nil)
+   "
+Up^^       Down^^      Miscellaneous      % 2(mc/num-cursors) cursor%s(if (> (mc/num-cursors) 1) \"s\" \"\")
+------------------------------------------------------------------
+ [_p_]  Prev   [_n_]  Next   [_l_] Edit lines [_0_] Insert numbers
+ [_P_]  Skip   [_N_]  Skip   [_a_] Mark all  [_A_] Insert letters
+ [_M-p_] Unmark  [_M-n_] Unmark  [_s_] Search   [_q_] Quit
+ [_|_] Align with input CHAR    [Click] Cursor at point"
+   ("l" mc/edit-lines :exit t)
+   ("a" mc/mark-all-like-this :exit t)
+   ("n" mc/mark-next-like-this)
+   ("N" mc/skip-to-next-like-this)
+   ("M-n" mc/unmark-next-like-this)
+   ("p" mc/mark-previous-like-this)
+   ("P" mc/skip-to-previous-like-this)
+   ("M-p" mc/unmark-previous-like-this)
+   ("|" mc/vertical-align)
+   ("s" mc/mark-all-in-region-regexp :exit t)
+   ("0" mc/insert-numbers :exit t)
+   ("A" mc/insert-letters :exit t)
+   ("<mouse-1>" mc/add-cursor-on-click)
+   ;; Help with click recognition in this hydra
+   ("<down-mouse-1>" ignore)
+   ("<drag-mouse-1>" ignore)
+   ("q" nil)))
+
+(global-set-key (kbd "C-j") nil)
+;; 删去光标所在行（在图形界面时可以用 "C-S-<DEL>"，终端常会拦截这个按法)
+(global-set-key (kbd "C-j C-k") 'kill-whole-line)
+(use-package avy
+  :ensure t
+  :bind
+  (("C-j C-SPC" . avy-goto-char-timer)))
+
 (provide 'init-local)
