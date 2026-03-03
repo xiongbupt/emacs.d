@@ -63,3 +63,5 @@ librime/
 rime/
 *.jar
 Rime/
+.amx-items
+chinese/

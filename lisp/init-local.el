@@ -304,12 +304,17 @@
 
 (use-package amx
   :ensure t
-  :init (amx-mode))
+  ;; 只有在非 -Q 模式下才尝试配置和开启
+  :if user-init-file
+  :custom
+  ;; 注意：路径必须加双引号
+  (amx-save-file "~/.emacs.d/.amx-items")
+  :config
+  (amx-mode 1))
 
 (use-package ace-window
   :ensure t
   :bind (("C-x o" . 'ace-window)))
-
 
 (use-package mwim
   :ensure t
@@ -351,30 +356,6 @@
                           ("l" undo-tree-load-history)
                           ("u" undo-tree-visualize :color blue)
                           ("q" nil :color blue)))
-(use-package undo-tree
-  :ensure t
-  :init (global-undo-tree-mode)
-  :after hydra
-  :bind ("C-x C-h u" . hydra-undo-tree/body)
-  :hydra (hydra-undo-tree (:hint nil)
-                          "
- _p_: undo _n_: redo _s_: save _l_: load  "
-                          ("p"  undo-tree-undo)
-                          ("n"  undo-tree-redo)
-                          ("s"  undo-tree-save-history)
-                          ("l"  undo-tree-load-history)
-                          ("u"  undo-tree-visualize "visualize" :color blue)
-                          ("q"  nil "quit" :color blue)))
-
-;; Enable global undo-tree mode if not already done
-(global-undo-tree-mode)
-
-;; Enable auto-saving of undo history
-(setq undo-tree-auto-save-history t)
-
-;; Redirect all undo history files to a specific directory
-;; This example uses "~/.emacs.d/undo"
-(setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
 
 (use-package multiple-cursors
   :ensure t
