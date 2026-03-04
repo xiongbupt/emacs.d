@@ -91,9 +91,33 @@
 (use-package yasnippet
   :ensure t
   :config
-  (add-to-list 'yas-snippet-dirs "~/Dropbox/org/snippets") ;; 建议用 add-to-list
+  (add-to-list 'yas-snippet-dirs "~/Dropbox/org/snippets")
   (yas-global-mode 1))
 
+(use-package autoinsert
+  :init
+  (setq auto-insert-mode 1)
+  (setq auto-insert-query nil)
+  :config
+  ;; 关联后缀与处理函数
+  (define-auto-insert
+    '("\\.org\\'" . "Org Default Template")
+    (lambda ()
+      (org-mode)
+      (let ((snippet (yas-lookup-snippet "default-org-template" 'org-mode)))
+        (if snippet
+            (progn
+              (delete-region (point-min) (point-max))
+              (yas-expand-snippet snippet))
+          (message "Snippet 'default-org-template' not found")))))
+
+  ;; 核心补丁：如果打开新文件没反应，强制跑一次 auto-insert
+  (add-hook 'find-file-hook
+            (lambda ()
+              (when (and (buffer-file-name)
+                         (string-match-p "\\.org\\'" (buffer-file-name))
+                         (zerop (buffer-size)))
+                (auto-insert)))))
 (use-package yasnippet-snippets
   :ensure t
   :after yasnippet)
