@@ -20,7 +20,7 @@
                             rime-predicate-current-uppercase-letter-p ;;将要输入的为大写字母时
                             ;;rime-predicate-current-input-punctuation-p ;; 当要输入的是符号时
                             rime-predicate-punctuation-after-space-cc-p ;; 当要在中文字符且有空格之后输入符号时
-                            rime-predicate-punctuation-line-begin-p ;;在行首要输入符号时
+                            ;;rime-predicate-punctuation-line-begin-p ;;在行首要输入符号时
 			    ))
 
 

@@ -11,12 +11,19 @@
 ;; load solarized-theme
 ;; https://github.com/sellout/emacs-color-theme-solarized
 (setq frame-background-mode 'dark)
-(let ((basedir "~/.emacs.d/elpa-30.2/themes/"))
-  (dolist (f (directory-files basedir))
-    (if (and (not (or (equal f ".") (equal f "..")))
-             (file-directory-p (concat basedir f)))
-        (add-to-list 'custom-theme-load-path (concat basedir f)))))
-(load-theme 'sanityinc-solarized-dark t)
+(let ((basedir (expand-file-name "~/.emacs.d/elpa-30.2/themes/")))
+  (when (file-directory-p basedir)
+    ;; 只有目录存在时才执行后续逻辑
+    (dolist (f (directory-files basedir))
+      (let ((full-path (concat basedir f)))
+        (if (and (not (member f '("." "..")))
+                 (file-directory-p full-path))
+            (add-to-list 'custom-theme-load-path full-path))))
+
+    ;; 将 load-theme 放在判断内部，防止主题文件找不到而报错
+    (condition-case nil
+        (load-theme 'sanityinc-solarized-dark t)
+      (error (message "Warning: Could not load sanityinc-solarized-dark theme.")))))
 
 
 (require 'package)
