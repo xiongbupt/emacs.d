@@ -16,12 +16,13 @@
   ;;                            rime-predicate-org-in-src-block-p
   ;;                            rime-predicate-org-latex-mode-p
   ;;                            rime-predicate-in-code-string-p))
-  (rime-inline-predicates '(rime-predicate-space-after-cc-p ;;在中文字符且有空格之后
-                            rime-predicate-current-uppercase-letter-p ;;将要输入的为大写字母时
-                            ;;rime-predicate-current-input-punctuation-p ;; 当要输入的是符号时
-                            rime-predicate-punctuation-after-space-cc-p ;; 当要在中文字符且有空格之后输入符号时
-                            ;;rime-predicate-punctuation-line-begin-p ;;在行首要输入符号时
-			    ))
+  ;; (rime-inline-predicates '(
+  ;;                           ;; rime-predicate-space-after-cc-p ;;在中文字符且有空格之后
+  ;;                           ;; rime-predicate-current-uppercase-letter-p ;;将要输入的为大写字母时
+  ;;                           ;;rime-predicate-current-input-punctuation-p ;; 当要输入的是符号时
+  ;;                           rime-predicate-punctuation-after-space-cc-p ;; 当要在中文字符且有空格之后输入符号时
+  ;;                           ;;rime-predicate-punctuation-line-begin-p ;;在行首要输入符号时
+  ;;       		    ))
 
 
   :init
@@ -74,6 +75,6 @@
 ;;(require 'deno-bridge)
 ;;(add-to-list 'load-path (expand-file-name "~/.emacs.d/lisp/deno-bridge-jieba"))
 ;;(require 'deno-bridge-jieba)
-(global-visual-line-mode 1)
+;; (global-visual-line-mode 1)
 (provide 'init-rime)
 ;;;;; init-rime.el ends here

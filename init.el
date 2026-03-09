@@ -199,6 +199,7 @@
 ;; Allow users to provide an optional "init-local" containing personal settings
 (require 'init-local nil t)
 (require 'init-rime)
+(require 'init-blog)
 
 (provide 'init)
 

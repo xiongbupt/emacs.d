@@ -429,5 +429,6 @@ Up^^       Down^^      Miscellaneous      % 2(mc/num-cursors) cursor%s(if (> (mc
   :ensure t
   :bind
   (("C-j C-SPC" . avy-goto-char-timer)))
-
+(add-hook 'org-mode-hook 'visual-line-mode)
+(setq truncate-lines nil)
 (provide 'init-local)
