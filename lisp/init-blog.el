@@ -213,7 +213,7 @@ Use :noexport: tag or :EXPORT_HUGO_DRAFT: true to control visibility."
                   (replace-regexp-in-string "[^a-z0-9-]+" "-" slug-base)
                   "-+" "-+"))
            (date (format-time-string "%Y-%m-%d")))
-      (insert (format "\n** %s\t\t\t\t\t\t\t\t:noexport:\n" title))
+      (insert (format "\n* %s\t\t\t\t\t\t\t\t:noexport:\n" title))
       (insert ":PROPERTIES:\n")
       (insert (format ":EXPORT_FILE_NAME: %s\n" (or slug "untitled")))
       (insert (format ":EXPORT_DATE: %s\n" date))

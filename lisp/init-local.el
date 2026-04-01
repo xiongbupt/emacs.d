@@ -236,7 +236,6 @@
 ;;         (".*" . (ucs-bom utf-8 cp936 gb18030 big5 euc-jp euc-kr iso-8859-1))
 ;;         ))
 (setq debug-on-error t)
-
 (defun setup-chinese-font ()
   "设置中英文、符号及 Emoji 字体，解决加粗乱码与符号显示问题。"
   (interactive)
@@ -246,19 +245,26 @@
     (let ((english-font "Monaco")
           (chinese-font "PingFang SC")
           (emoji-font "Apple Color Emoji"))
+
       ;; 1. 基础英文字体
       (set-face-attribute 'default nil :family english-font :height 140)
       (setq face-font-rescale-alist '(("PingFang SC" . 1.1)))
 
       ;; 2. 遍历样式：确保中文和符号在粗体/斜体下不乱码
       (dolist (weight '(normal bold))
-        (dolist (slant '(normal italic)))
-        (let ((zh-spec (font-spec :family chinese-font :weight weight :slant 'normal)))
-          ;; 覆盖汉字、中日韩标点及通用符号
-          (dolist (charset '(han cjk-misc symbol bopomofo kana))
-            (set-fontset-font t charset zh-spec nil 'prepend))))
+        (dolist (slant '(normal italic)) ; 修正了这里的括号，确保 let 在循环内
+          (let ((zh-spec (font-spec :family chinese-font :weight weight :slant slant)))
+            ;; 覆盖汉字、中日韩标点
+            (dolist (charset '(han cjk-misc bopomofo kana))
+              (set-fontset-font t charset zh-spec nil 'prepend))
+            ;; 3. 符号处理：先用中文字体覆盖通用符号
+            (set-fontset-font t 'symbol zh-spec nil 'prepend))))
 
-      ;; 3. 专门处理 Emoji 脚本
+      ;; 4. 【关键修正】制表符强制回归英文字体
+      ;; 解决 PingFang SC 可能导致的 ├ 乱码或对齐问题
+      (set-fontset-font t '(#x2500 . #x257F) (font-spec :family english-font))
+
+      ;; 5. 专门处理 Emoji 脚本
       (set-fontset-font t 'emoji (font-spec :family emoji-font) nil 'prepend)))
 
    ;; --- Linux (飞腾/UOS) 配置 ---
@@ -266,20 +272,25 @@
     (let ((english-font "Source Code Pro")
           (chinese-font "Noto Sans CJK SC")
           (emoji-font "Noto Color Emoji"))
+
       ;; 1. 基础英文字体
       (set-face-attribute 'default nil :family english-font :height 150)
       (setq face-font-rescale-alist '(("Noto Sans CJK SC" . 1.0)))
 
       ;; 2. 遍历样式
       (dolist (weight '(normal bold))
-        (dolist (slant '(normal italic)))
-        (let ((zh-spec (font-spec :family chinese-font :weight weight :slant 'normal)))
-          (dolist (charset '(han cjk-misc symbol bopomofo kana))
-            (set-fontset-font t charset zh-spec nil 'prepend))))
+        (dolist (slant '(normal italic))
+          (let ((zh-spec (font-spec :family chinese-font :weight weight :slant slant)))
+            (dolist (charset '(han cjk-misc bopomofo kana))
+              (set-fontset-font t charset zh-spec nil 'prepend))
+            (set-fontset-font t 'symbol zh-spec nil 'prepend))))
 
-      ;; 3. 专门处理 Emoji 脚本 (Linux)
-      ;; 如果飞腾系统没装该字体，可以 sudo apt install fonts-noto-color-emoji
+      ;; 3. 【关键修正】Linux 下同样强制制表符使用等宽英文
+      (set-fontset-font t '(#x2500 . #x257F) (font-spec :family english-font))
+
+      ;; 4. 专门处理 Emoji 脚本
       (set-fontset-font t 'emoji (font-spec :family emoji-font) nil 'prepend)))))
+
 
 ;; --- 关键：挂载到所有可能的入口 ---
 
